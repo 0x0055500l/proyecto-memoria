@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="text-center w-100">
+    <h2 class="form-title">¡Bienvenido, {{ user.username }}! 👋</h2>
+    <p class="mb-4">Elige la dificultad del Juego de Memoria.</p>
+    <div class="row gy-3">        
+        <div class="col-md-12">
+            <a href="{% url 'game' difficulty='basico' %}" class="text-decoration-none">
+                <div class="card card-body text-success border-success shadow-sm btn-game-card">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-person-arms-up fs-2 me-3"></i>
+                        <div>
+                            <h5 class="card-title mb-0">Básico (15 Intentos)</h5>
+                            <p class="card-text mb-0">Ideal para empezar. (6 pares)</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-12">
+            <a href="{% url 'game' difficulty='medio' %}" class="text-decoration-none">
+                <div class="card card-body text-warning border-warning shadow-sm btn-game-card">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-fire fs-2 me-3"></i>
+                        <div>
+                            <h5 class="card-title mb-0">Medio (20 Intentos)</h5>
+                            <p class="card-text mb-0">Un reto balanceado. (8 pares)</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+        <div class="col-md-12">
+            <a href="{% url 'game' difficulty='avanzado' %}" class="text-decoration-none">
+                <div class="card card-body text-danger border-danger shadow-sm btn-game-card">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-gem fs-2 me-3"></i>
+                        <div>
+                            <h5 class="card-title mb-0">Avanzado (25 Intentos)</h5>
+                            <p class="card-text mb-0">Solo para expertos. (10 pares)</p>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    </div>
+    <hr class="my-4">
+    <a href="{% url 'profile' %}" class="btn btn-info text-white">
+        <i class="bi bi-bar-chart-fill"></i> Ver Mi Perfil
+    </a>
+    <a href="{% url 'logout' %}" class="btn btn-secondary">
+        <i class="bi bi-box-arrow-right"></i> Cerrar Sesión
+    </a>
+</div>
+{% endblock %}

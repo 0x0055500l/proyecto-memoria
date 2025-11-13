@@ -1,0 +1,29 @@
+services:
+  web:
+    build: .
+    command: sh -c "python manage.py collectstatic --noinput && python manage.py runserver 0.0.0.0:8000"
+    volumes:
+      - .:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - DJANGO_SECRET_KEY=django-insecure-1p8k7%#elk9od!s8hyg4m8c8n35ukbsvd#j5=9l+tqmyas5u(j
+      - DJANGO_DEBUG=False
+      - DB_NAME=memorygamedb
+      - DB_USER=admin
+      - DB_PASS=admin123
+      - DB_HOST=db
+      - DB_PORT=5432
+    depends_on:
+      - db
+  db:
+    image: postgres:14
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      - POSTGRES_DB=memorygamedb
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=admin123
+
+volumes:
+  postgres_data:

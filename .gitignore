@@ -1,0 +1,29 @@
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+
+# --- Entornos Virtuales ---
+.venv/
+venv/
+env/
+
+# --- Bases de Datos ---
+*.sqlite3
+*.sqlite3-journal
+# Si por error se creó la carpeta de volumen de postgres localmente:
+postgres_data/
+
+# --- Django ---
+local_settings.py
+db.sqlite3
+staticfiles/
+
+media/
+
+# --- Variables de Entorno (Seguridad) ---
+.env
+
+# --- Sistema Operativo ---
+.DS_Store
+Thumbs.db
