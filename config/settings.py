@@ -21,7 +21,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-1p8k7%#elk9od!s8hyg4m8c8n35ukbsvd#j5=9l+tqmyas5u(j'
+SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
@@ -145,3 +145,17 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 #URL PRIVADAS DE APP MEMORY
 LOGIN_URL = 'login'
+
+# --- CONFIGURACIÓN DE CORREO (GMAIL SMTP) ---
+# Django va usar el protocolo estándar de envío de correo
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True # Usar encriptación TLS
+
+# Lee las credenciales de forma segura desde docker-compose.yml
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
+
+# Este será el correo que aparecerá como "De:"
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
