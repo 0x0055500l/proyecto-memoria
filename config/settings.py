@@ -10,8 +10,9 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
-import os 
+import os
 from pathlib import Path
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -28,8 +29,8 @@ DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 
 # PARRA CORRER EN LOCAL
 # ALLOWED_HOSTS = []
-# PARA CORRER ACEPTANDO TODO TRAFICO
-ALLOWED_HOSTS = ['*']
+# PARA CORRER ACEPTANDO TODo TRAFICO del VPS y una ip local
+ALLOWED_HOSTS = ['20.64.224.1','nullmaquina.westus2.cloudapp.azure.com','192.168.0.224']
 # PARA CORRER A IP ESPECIFICAS
 # ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.0.44']
 
@@ -44,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'memory',
+    'axes',
 ]
 
 MIDDLEWARE = [
@@ -55,7 +57,19 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'axes.middleware.AxesMiddleware',
 ]
+
+# Backends de Autenticación
+# Le dice a Django que verifique 'axes' ANTES de intentar loguear a un usuario
+AUTHENTICATION_BACKENDS = [
+    # AxesStandaloneBackend debe ir primero
+    'axes.backends.AxesStandaloneBackend',
+
+    # Este es el backend por defecto que Django usa
+    'django.contrib.auth.backends.ModelBackend',
+]
+# ------------------------------------
 
 ROOT_URLCONF = 'config.urls'
 
@@ -159,3 +173,9 @@ EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
 
 # Este será el correo que aparecerá como "De:"
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
+
+# Configuración de Rate-Limiting
+AXES_FAILURE_LIMIT = 3               # 3 intentos fallidos
+AXES_COOLOFF_TIME = timedelta(minutes=1) # 1 minuto de bloqueo
+AXES_LOCK_OUT_BY_COMBINATION_USER_AND_IP = True # Bloquea al usuario Y a la IP
+AXES_RESET_ON_SUCCESS = True # Resetea el contador si el login es exitoso

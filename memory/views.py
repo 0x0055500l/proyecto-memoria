@@ -6,10 +6,13 @@ from django.http import JsonResponse
 from django.db.models import Avg # <-- Importa Avg
 from .models import Player, MemoryGame
 import json
-# --- NUEVOS FORMULARIOS ---
+# --- NUEVOS FORMULARIOS para validar form ---
 from .forms import CustomRegisterForm, CustomLoginForm
+# este es usado para el geoip
 import requests
 from ipware.ip import get_client_ip
+#este es usado para el rate limit de login y hacer lock
+from axes.handlers.proxy import AxesProxyHandler
 
 #vista de 404
 def handler_404_view(request, exception):
@@ -30,18 +33,28 @@ def register_view(request):
     return render(request, 'register.html', {'form': form})
 
 def login_view(request):
+    # --- VERIFICA SI EL USUARIO ESTÁ BLOQUEADO ANTES DE HACER NADA ---
+    # Obtenemos el "manejador" de axes para este request
+    if AxesProxyHandler.is_locked(request):
+        return render(request, 'login.html', {
+            'form': CustomLoginForm(),
+            'is_locked_out': True
+        })
+    # --------------------------------------------------
+
     if request.method == 'POST':
         form = CustomLoginForm(request, data=request.POST)
         if form.is_valid():
             username = form.cleaned_data.get('username')
             password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
+            user = authenticate(request=request, username=username, password=password)
             if user is not None:
                 login(request, user)
                 return redirect('home')
     else:
         form = CustomLoginForm()
-    return render(request, 'login.html', {'form': form})
+    # --- PASA EL 'is_locked_out' COMO False POR DEFECTO ---
+    return render(request, 'login.html', {'form': form, 'is_locked_out': False})
 
 def logout_view(request):
     logout(request)

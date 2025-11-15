@@ -1,5 +1,6 @@
-Django>=4.0
-psycopg2-binary
-whitenoise
-django-ipware
-requests
+Django==5.2.8
+psycopg2-binary==2.9.11
+whitenoise==6.11.0
+django-ipware==7.0.1
+requests==2.32.5
+django-axes==8.0.0
