@@ -67,7 +67,11 @@ def home_view(request):
 
 @login_required
 def profile_view(request):
-    player = request.user.player
+    #player = request.user.player
+
+    # Si el perfil existe, lo trae. Si no existe (usuario viejo), lo crea.
+    player, created = Player.objects.get_or_create(user=request.user)
+
     # Buscamos el historial del juego de memoria
     game_history = MemoryGame.objects.filter(player=player).order_by('-date_played')
 
@@ -104,7 +108,8 @@ def save_game_view(request):
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            player = request.user.player
+            #player = request.user.player           usado anteriormente pero cambiado por nueva implementacion mas robusta
+            player, created = Player.objects.get_or_create(user=request.user)
 
             # --- Logica de pais de jugador ---
             if not player.country:
