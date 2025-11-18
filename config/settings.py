@@ -59,6 +59,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'axes.middleware.AxesMiddleware',
 ]
+# --- CONFIGURACIÓN DE PROTECCIÓN CONTRA CLICKJACKING ---
+X_FRAME_OPTIONS = 'DENY'
 
 # Backends de Autenticación
 # Le dice a Django que verifique 'axes' ANTES de intentar loguear a un usuario

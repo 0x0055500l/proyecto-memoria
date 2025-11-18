@@ -5,7 +5,11 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.db.models import Avg # <-- Importa Avg
 from .models import Player, MemoryGame
+import os
 import json
+import time
+#esta la usamos para manejar fechas y horas de honduras
+from django.utils.timezone import localtime
 # --- NUEVOS FORMULARIOS para validar form ---
 from .forms import CustomRegisterForm, CustomLoginForm
 # este es usado para el geoip
@@ -87,19 +91,48 @@ def profile_view(request):
             rank = i + 1
             break
 
+    # --- PREPARAR DATOS PARA EL GRÁFICO ---
+    # Tomamos las últimas 10 partidas (están ordenadas por fecha descendente)
+    last_10_games = game_history[:10]
+    
+    # Las invertimos para que el gráfico vaya de izquierda (antiguo) a derecha (nuevo)
+    games_for_chart = reversed(list(last_10_games))
+    
+    labels = [] # Fechas
+    data_time = [] # Tiempos
+    
+    
+    for game in games_for_chart:
+        # Formateamos la fecha: por ejemplo "14 Nov 15:30"
+        local_date = localtime(game.date_played)
+        labels.append(local_date.strftime("%d %b %H:%M"))
+        data_time.append(game.time_spent)
+
+    # ---------------------------------------------
+
     context = {
         'player': player,
         'game_history': game_history,
         'avg_time': avg_time, # Nueva stat
         'rank': rank, # Nueva stat
+        'chart_labels': json.dumps(labels),
+        'chart_data': json.dumps(data_time),
     }
     return render(request, 'profile.html', context)
 
 # --- Vistas del Juego de Memoria (Nuevas) ---
 @login_required
 def memory_game_view(request, difficulty):
+    # 1. Obtener la semilla de la URL o generar una nueva
+    seed = request.GET.get('seed')
+    
+    if not seed:
+        # Generamos una semilla basada en el tiempo actual si no viene una
+        seed = str(int(time.time()))
+
     context = {
-        'difficulty': difficulty
+        'difficulty': difficulty,
+        'seed': seed  # <--- Pasamos la semilla al HTML
     }
     return render(request, 'memory_game.html', context)
 

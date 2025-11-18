@@ -1,3 +1,18 @@
+// --- Generador de Números Aleatorios con Semilla (LCG) ---
+function LCG(seed) {
+    const m = 2147483647;
+    const a = 16807;
+    const c = 0;
+    let z = seed;
+
+    return function() {
+        z = (a * z + c) % m;
+        return (z - 1) / (m - 1); // Retorna un float entre 0 y 1
+    };
+}
+// Inicializamos el generador (se definirá dentro del DOMContentLoaded usando la variable global gameSeed)
+let seededRandom = Math.random;
+
 function getCookie(name) {
     let cookieValue = null;
     if (document.cookie && document.cookie !== '') {
@@ -76,6 +91,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const resetBtn = document.getElementById('reset-game-btn');
         const muteBtn = document.getElementById('mute-btn');
         const muteIcon = document.getElementById('mute-icon');
+        const shareBtn = document.getElementById('share-btn');
 
         const difficulty = board.dataset.difficulty;
         let isMuted = false;
@@ -92,6 +108,13 @@ document.addEventListener('DOMContentLoaded', () => {
         let totalPairs = 0;
         let timer = 0;
         let timerInterval = null;
+
+        // Inicializar el generador con la semilla que vino del HTML
+        if (typeof gameSeed !== 'undefined' && gameSeed) {
+             // Convertimos el string a número para el generador
+             const seedNum = parseInt(gameSeed.replace(/\D/g,'').slice(0, 9)) || 12345;
+             seededRandom = LCG(seedNum);
+        }
 
         // Configuración de niveles
         const difficultySettings = {
@@ -190,7 +213,20 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         function shuffle(array) {
-            array.sort(() => Math.random() - 0.5);
+            let currentIndex = array.length, randomIndex;
+
+            // Mientras queden elementos para barajar...
+            while (currentIndex !== 0) {
+
+                // Elegir un elemento restante...
+                // Usamos NUESTRO generador con semilla
+                randomIndex = Math.floor(seededRandom() * currentIndex);
+                currentIndex--;
+
+                // Y lo intercambiamos con el elemento actual.
+                [array[currentIndex], array[randomIndex]] = [
+                    array[randomIndex], array[currentIndex]];
+            }
         }
 
         function startTimer() {
@@ -269,6 +305,52 @@ document.addEventListener('DOMContentLoaded', () => {
         function resetBoard() {
             [hasFlippedCard, lockBoard] = [false, false];
             [firstCard, secondCard] = [null, null];
+        }
+
+        // Listener para compartir (VERSIÓN ROBUSTA)
+        if (shareBtn) {
+            shareBtn.addEventListener('click', () => {
+                const url = new URL(window.location.href);
+                url.searchParams.set('seed', gameSeed); 
+                const textToCopy = url.toString();
+                
+                // Verificamos si la API moderna está disponible y segura
+                if (navigator.clipboard && window.isSecureContext) {
+                    navigator.clipboard.writeText(textToCopy).then(() => {
+                        alert('¡Enlace copiado! Envíalo a un amigo.\nNo olvides iniciar sesion primero!');
+                    }).catch(err => {
+                        fallbackCopyTextToClipboard(textToCopy);
+                    });
+                } else {
+                    // Si estamos en HTTP (tu caso actual), usamos el método antiguo
+                    fallbackCopyTextToClipboard(textToCopy);
+                }
+            });
+        }
+        // Función auxiliar para copiar en entornos no seguros (HTTP)
+        function fallbackCopyTextToClipboard(text) {
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            
+            // Evitar que el textarea sea visible
+            textArea.style.position = "fixed";
+            textArea.style.left = "-9999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            
+            try {
+                const successful = document.execCommand('copy');
+                if (successful) {
+                    alert('¡Enlace copiado! Envíalo a un amigo.\nNo olvides iniciar sesion primero!');
+                } else {
+                    prompt("Copia este enlace manualment:", text);
+                }
+            } catch (err) {
+                prompt("Copia este enlace manualmente:", text);
+            }
+            
+            document.body.removeChild(textArea);
         }
 
         resetBtn.addEventListener('click', () => {
