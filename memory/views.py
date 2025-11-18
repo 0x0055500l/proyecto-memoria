@@ -30,7 +30,12 @@ def register_view(request):
         if form.is_valid():
             user = form.save()
             Player.objects.create(user=user) # Crea el perfil de jugador
-            login(request, user)
+	    #logica vieja antes de fallo de doble auth
+            #login(request, user)
+
+            # --- ESPECIFICAMOS EL BACKEND ---
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            # ----------------------------------------
             return redirect('home')
     else:
         form = CustomRegisterForm()

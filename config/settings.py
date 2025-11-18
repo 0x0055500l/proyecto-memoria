@@ -92,7 +92,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'config.wsgi.application'
 
-
+#primer implementacion de db pero cambiada po postgresql
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
