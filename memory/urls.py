@@ -37,4 +37,5 @@ urlpatterns = [
              template_name='password_reset_complete.html' # "Tu contraseña se cambió con éxito"
          ),
          name='password_reset_complete'),
+    path('api/session-status/', views.session_status_view, name='session_status'), # Ruta para verificar sesion
 ]

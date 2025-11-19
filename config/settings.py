@@ -30,7 +30,7 @@ DEBUG = os.environ.get('DJANGO_DEBUG', 'False') == 'True'
 # PARRA CORRER EN LOCAL
 # ALLOWED_HOSTS = []
 # PARA CORRER ACEPTANDO TODo TRAFICO del VPS y una ip local
-ALLOWED_HOSTS = ['20.64.224.1','nullmaquina.westus2.cloudapp.azure.com','192.168.0.224']
+ALLOWED_HOSTS = ['34.202.231.154','ec2-34-202-231-154.compute-1.amazonaws.com','192.168.0.224']
 # PARA CORRER A IP ESPECIFICAS
 # ALLOWED_HOSTS = ['localhost', '127.0.0.1', '192.168.0.44']
 
@@ -58,6 +58,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'axes.middleware.AxesMiddleware',
+    'memory.middleware.SingleSessionMiddleware',
 ]
 # --- CONFIGURACIÓN DE PROTECCIÓN CONTRA CLICKJACKING ---
 X_FRAME_OPTIONS = 'DENY'

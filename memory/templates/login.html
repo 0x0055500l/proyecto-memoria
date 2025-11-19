@@ -9,7 +9,16 @@
     </div>
 
     <h2 class="form-title">🧠 Iniciar Sesión</h2>
-
+    <!-- --- MENSAJE DE SESION SCERRADA --- -->
+    {% if request.GET.error == 'duplicate_session' %}
+    <div class="alert alert-warning d-flex align-items-center animate-in" role="alert">
+        <i class="bi bi-exclamation-triangle-fill flex-shrink-0 me-2 fs-4"></i>
+        <div>
+            <strong>Sesión Cerrada:</strong><br>
+            Se ha iniciado sesión en otro dispositivo.
+        </div>
+    </div>
+    {% endif %}
     <!-- --- MENSAJE DE BLOQUEO --- -->
     {% if is_locked_out %}
         <div class="alert alert-danger" role="alert">

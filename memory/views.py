@@ -30,7 +30,11 @@ def register_view(request):
         if form.is_valid():
             user = form.save()
             Player.objects.create(user=user) # Crea el perfil de jugador
-            login(request, user)
+            #VIEJA IMPLEMENTACION POR FALLO DE DOBLE AUTH
+            #login(request, user)
+            # --- ESPECIFICAMOS EL BACKEND ---
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
+            # ----------------------------------------
             return redirect('home')
     else:
         form = CustomRegisterForm()
@@ -54,6 +58,15 @@ def login_view(request):
             user = authenticate(request=request, username=username, password=password)
             if user is not None:
                 login(request, user)
+                # --- Actualizar la session_key del usuario ---
+                try:
+                    player = user.player
+                    player.last_session_key = request.session.session_key
+                    player.save()
+                except Player.RelatedObjectDoesNotExist:
+                    # En caso de que un usuario (ej. un superuser viejo) no tenga player
+                    Player.objects.create(user=user, last_session_key=request.session.session_key)
+                # ----------------------------------------------------
                 return redirect('home')
     else:
         form = CustomLoginForm()
@@ -229,3 +242,13 @@ def ranking_view(request):
         'players_list': players_list,
     }
     return render(request, 'ranking.html', context)
+
+# Vista de verificar sesion del usuario para ver si esta activo
+def session_status_view(request):
+    # Si el usuario está autenticado, respondemos 200 OK.
+    # Si NO está autenticado (porque el middleware lo sacó), 
+    # el middleware o Django devolverá 302 (Login) o 403.
+    if request.user.is_authenticated:
+        return JsonResponse({'status': 'active'})
+    else:
+        return JsonResponse({'status': 'inactive'}, status=401)

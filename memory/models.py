@@ -8,6 +8,7 @@ class Player(models.Model):
     games_played = models.PositiveIntegerField(default=0)
     best_score = models.IntegerField(default=0)
     country = models.CharField(max_length=50, blank=True, null=True)
+    last_session_key = models.CharField(max_length=40, null=True, blank=True)
 
     def __str__(self):
         return f"Estadísticas de {self.user.username}"
