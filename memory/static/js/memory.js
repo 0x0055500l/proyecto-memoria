@@ -124,13 +124,13 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         let failLimit = 0;
 
-        // Imágenes base (asegúrate de tenerlas en static/img/memory/)
+        // Imágenes base
         const baseImages = ['1.png', '2.png', '3.png', '4.png', '5.png', '6.png', '7.png', '8.png', '9.png', '10.png','11.jpg','12.jpg','13.jpg','14.jpg','15.jpg','16.jpg','17.jpg','18.jpg','19.jpg'];
 
         // --- Funcion de guardar Resultados
         async function saveGameResult(isWin) {
 
-            // --- USA EL NUEVO 'getCookie' ---
+            // --- 'getCookie' agregado nuevo---
             const csrfToken = getCookie('csrftoken');
 
             const dataToSend = {
@@ -354,7 +354,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         resetBtn.addEventListener('click', () => {
-            // Simplemente reinicia el juego. 
+            // este boton Simplemente reinicia el juego. 
             // Esto es seguro porque 'startGame' ya limpia el tablero.
             isGameOver = true; // Marca el juego anterior como terminado
             clearInterval(timerInterval); // Detiene el timer anterior
@@ -373,6 +373,7 @@ document.addEventListener('DOMContentLoaded', () => {
         function checkWinCondition() {
             if (pairsFound === totalPairs) {
                 clearInterval(timerInterval);
+                //Anteriormente usado pero cambiado por el nuevo endGame
                 //setTimeout(() => {
                 //    alert(`¡Ganaste! \nMovimientos: ${moves} \nFallas: ${fails} \nTiempo: ${timer}s`);
                 //    saveGameResult(true);
@@ -409,7 +410,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     <br><strong>Tiempo:</strong> ${timer}s
                 `;
             }
-            // NUEVO: Añadir listener al botón del modal para redirigir
+            // Añadir listener al botón del modal para redirigir
             modalButton.addEventListener('click', () => {
                 window.location.href = '/profile/'; // Redirigir al perfil al hacer clic
             });
