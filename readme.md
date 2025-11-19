@@ -65,6 +65,18 @@ El sistema permite a los usuarios registrarse, competir en diferentes niveles de
 * Manejo eficiente de archivos estáticos en producción (`DEBUG=False`) usando **WhiteNoise**.
 * Páginas de error 404 personalizadas para evitar fugas de información.
 
+### 🛡️ Gestión de Sesiones y Seguridad Avanzada
+El sistema ha sido diseñado con un enfoque robusto en la seguridad y la integridad de las sesiones de usuario, incorporando las siguientes características clave:
+
+* Sesión Única por Dispositivo
+Para garantizar una experiencia de usuario controlada y mejorar la seguridad, el juego implementa una política de sesión única por dispositivo:
+
+* Invalidación Automática: Si un usuario inicia sesión en un nuevo dispositivo (ej. un teléfono), cualquier sesión activa previa (ej. en una computadora) será invalidada automáticamente en el servidor.
+
+* Notificación en Tiempo Real: Las sesiones inactivas son monitoreadas. Si se detecta que una sesión ha sido cerrada desde otro lugar, la interfaz de usuario se actualiza de forma proactiva, redirigiendo al usuario a la pantalla de inicio de sesión con una notificación clara sobre la causa del cierre de sesión.
+
+* Tecnologías Clave: Esta funcionalidad se logra mediante un Middleware personalizado de Django (SingleSessionMiddleware) que verifica la clave de sesión en cada petición, y un mecanismo de polling asíncrono en el frontend que mantiene el estado de la sesión sincronizado con el servidor.
+
 ---
 
 ## 🛠 Arquitectura y Tecnologías
